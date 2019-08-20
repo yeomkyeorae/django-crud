@@ -34,3 +34,27 @@ def detail(request, article_pk):
     }
 
     return render(request, 'articles/detail.html', context)
+
+
+def delete(request, article_pk):
+    article = Article.objects.get(pk=article_pk)
+    article.delete()
+
+    return redirect('/articles/')
+
+
+def update(request, article_pk):
+    article = Article.objects.get(pk=article_pk) 
+    context = {
+        'article': article,
+        'article_pk': article_pk,
+    }
+    return render(request, 'articles/update.html', context)
+
+
+def updated(request, article_pk):
+    article = Article.objects.get(pk=article_pk)
+    article.title = request.POST.get('title')
+    article.content = request.POST.get('content')
+    article.save()
+    return render(request, 'articles/updated.html')
