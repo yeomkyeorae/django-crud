@@ -6,6 +6,7 @@ from django.db import models
 # 각각의 컬럼(필드) 정의
 class Article(models.Model):
     # id : integer 자동으로 정의(Primary Key)
+    # id = models.AutoField(primary_key=True) -> Integer 값이 자동으로 하나씩 증가(AUTOINCREMENT)
     # CharField - 필수 인자로 max_length 지정
     title = models.CharField(max_length=10)
     content = models.TextField()
@@ -17,7 +18,7 @@ class Article(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.id}. {self.title}'
+        return f'{self.id}, {self.title}'
 
 # models.py : python 클래스 정의
 #           : 모델 설계도
