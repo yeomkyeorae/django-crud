@@ -15,8 +15,8 @@ def new(request):
 
 
 def create(request):
-    title = request.GET.get('title')
-    content = request.GET.get('content')
+    title = request.POST.get('title')
+    content = request.POST.get('content')
     article = Article(title=title, content=content)
     article.save()
     # context = {
