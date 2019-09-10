@@ -8,12 +8,14 @@
     <h6>작성 일자 : {{ article.created_at }}</h6>
       <h6>수정 일자 : {{ article.updated_at }}</h6>
         <hr>
-        <div class="container border border-primary">
+        <div class="container border border-muted">
           <p>{{ article.content }}</p>
         </div>
-
+        <br>
         <a href="{% url 'articles:index' %}">목록으로</a>
         <a href="{% url 'articles:update' article.pk %}">수정하기</a>
-        <a href="{% url 'articles:delete' article.pk %}">삭제하기</a>
-
+        <form action="{% url 'articles:delete' article.pk %}" method="POST" onclick="return confirm('Do you want to delete it?')">
+          {% csrf_token %}
+          <input class="btn btn-danger" type="submit" value="삭제">
+        </form>
         {% endblock %}

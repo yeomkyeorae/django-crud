@@ -1,10 +1,11 @@
 {% extends 'articles/base.html' %}
 {% block body %}
   <h1 class="text-center">Board</h1>
-  <a href="{% url 'articles:new' %}" class="btn btn-danger mb-10">글 작성하기</a>
-  <table class="table table-dark">
+  {% comment %} url 파일에서 app_name이 articles의 name이 create인 path를 url로 {% endcomment %}
+  <a href="{% url 'articles:create' %}" class="btn btn-success mb-20">글 작성하기</a>
+  <table class="table table-muted">
   <thead class="thead-gray">
-    <tr class="bg-secondary">
+    <tr class="bg-primary">
       <th scope="col">#</th>
       <th scope="col">제목</th>
       <th scope="col">작성일자</th>
