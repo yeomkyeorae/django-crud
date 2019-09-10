@@ -6,9 +6,30 @@
 
 - 가상환경(venv)
 
-  - python 3.7.4
+  - python 3.7.4에서 가상환경 생성
 
+    ```bash
+    $ python -v
+    python 3.7.4
+    $ python -m venv venv
+    ```
     
+  - 가상환경 실행
+
+    ```bash
+    $ source venv/Scripts/activate
+    (venv)
+    $
+    ```
+
+  - 가상환경 종료
+
+    ```bash
+    (venv)
+    $ deactivate
+    ```
+
+  
 
 - pip - `requirements.txt` 확인
 

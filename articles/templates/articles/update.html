@@ -1,6 +1,6 @@
 {% extends 'articles/base.html' %}
 {% block body %}
-    <form action="/articles/{{ article.pk }}/updated/", method="POST">
+    <form action="{% url 'articles:updated' article.pk %}", method="POST">
       {% csrf_token %}
       <textarea name="title" id="" cols="30" rows="2">{{ article.title }}</textarea>
       <br>

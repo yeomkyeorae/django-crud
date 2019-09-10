@@ -1,6 +1,6 @@
 {% extends 'articles/base.html' %}
 {% block body %}
-    <form action="/articles/create/">
+<form action="{% url 'articles:create' %}">
   <div class="form-group">
     <label for="title">제목</label><br>
     <textarea name="title" id="title" cols="60" rows="2"></textarea>

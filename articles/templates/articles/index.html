@@ -1,7 +1,7 @@
 {% extends 'articles/base.html' %}
 {% block body %}
   <h1 class="text-center">Board</h1>
-  <a href="/articles/new/" class="btn btn-danger mb-10">글 작성하기</a>
+  <a href="{% url 'articles:new' %}" class="btn btn-danger mb-10">글 작성하기</a>
   <table class="table table-dark">
   <thead class="thead-gray">
     <tr class="bg-secondary">
@@ -14,7 +14,7 @@
     {% for article in articles %}
     <tr>
       <th scope="row">{{ article.id }}</th>
-      <td><a href="/articles/{{ article.pk }}">{{ article.title }}</a></td>
+      <td><a href="{{ article.pk }}">{{ article.title }}</a></td>
       <td>{{ article.created_at }}</td>
     </tr>
     {% endfor %}
