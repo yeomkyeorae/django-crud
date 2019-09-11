@@ -25,4 +25,41 @@ class Article(models.Model):
 # makemigrations : migration 파일 생성
 #           : DB 설계도 반영
 # migrate : migration 파일 DB 반영
-    
+
+
+class Comment(models.Model):
+    content = models.CharField(max_length=140)
+    created_at = models.DateTimeField(auto_now_add=True)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    # on_delete
+    # 1. CASCADE : 글이 삭제되었을 때 모든 댓글을 삭제
+    # 2. PROTECT : 댓글이 존재하면 글 삭제 안됨.
+    # 3. SET_NULL : 글이 삭제되면 NULL로 치환(NOT NULL일 경우 옵션 사용x)
+    # 4. SET_DEFAULT : 디폴트 값으로 치환
+
+    # In [1]: comment = Comment()
+
+    # In [2]: comment.content = '댓글입니다'
+
+    # In [3]: article = Article.objects.get(pk=41)
+
+    # In [4]: comment.article = article
+
+    # In [5]: comment.save()
+
+    # In [6]: comment
+    # Out[6]: <Comment: Comment object (1)>
+
+    # In [7]: comment.article
+    # Out[7]: <Article: 41, 풍성한 한가위 되세요>
+
+    # In [8]: article.comment_set.all()
+    # Out[8]: <QuerySet [<Comment: Comment object (1)>]>
+
+    # In [9]: Comment.objects.create(content='댓글2', article=article)
+    # Out[9]: <Comment: Comment object (2)>
+
+    # In [10]: article.comment_set.all()
+    # Out[10]: <QuerySet [<Comment: Comment object (1)>, <Comment: Comment object (2)>]>
+
+    # In [11]: exit()
