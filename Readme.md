@@ -279,10 +279,80 @@ Article.objects.all()[2] # LIMIT 1 OFFSET 2
 Article.objects.all()[:3]
 ```
 
-#### 2. Ordering
+### 6. Ordering
 
 ```python
 Article.objects.order_by('-id')   # id 순으로 내림차순 정렬
 Article.objects.order_by('title') # title을 기준으로 오름차순 정렬
 ```
 
+
+
+
+
+## 4. urls.py에 app_name을 등록함에 따른 변화들
+
+ 일일이 `html`과 django `파이썬 코드`에 url이 변경될 때마다 불편함을 느낀 `짱구`는 구글링을 한 결과 용이한 방법을 찾아내었다. 그것은 바로 `urls.py`에 `app_name`을 등록해 사용하는 것이다.
+
+ 먼저, `urls.py`를 살펴보자.
+
+```python
+from django.urls import path
+from . import views
+
+
+app_name = 'articles'
+
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('create/', views.create, name='create'),
+    path('<int:article_pk>/', views.detail, name='detail'),
+   	# ...
+]
+```
+
+ 두 가지 변화가 있다.
+
+- `app_name` 변수를 선언한 점.
+- 각각의 `path`에 `name` 변수가 생긴 점.
+
+
+
+ 두 번째로 `views.py`의 `create` 함수를 보자.
+
+```python
+def create(request):
+    if request.method == 'GET':
+        return render(request, 'articles/new.html')
+    else:
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        article = Article(title=title, content=content)
+        article.save()
+        
+        return redirect('articles:detail', article.pk)
+```
+
+ 위 함수의 `redirect` 부분을 보면 `articles:detail`로 명시한 부분이 있다. `articles`라는 `app_name`의 `name`이 `detail`인 `path`를 가리킨다. `article.pk`는 해당 path에서 `variable routing`부분의 인자 값을 가리킨다.
+
+
+
+ 세 번째로 새 글을 작성하는`new.html`의 `form` tag를 보자
+
+```html
+<!-- ... -->
+<form action="{% url 'articles:create' %}" method="POST">
+    <!-- ... -->
+</form>
+<!-- ... -->
+```
+
+ 위 `form` 태그의 `action` 부분을 보면 `form`태그 내 내용들을 어디로 보낼지 설정한다. `views.py`와 마찬가지로 `articles`라는 `app_name`의 `name`이 `create`로 보낸다는 것을 의미한다. `varible routing`이 필요할 경우에는 아래와 같이 쉼표 없이 순서에 맞게 변수를 적어준다.
+
+```html
+<form action="{% url 'articles:create' article.pk %}" method="POST">
+```
+
+ 마지막으로 `url` 인자로 명시해주는 것을 인지한다. 
+
+ 짱구는 이로인해 쉽게 url을 바꿀 수 있게 되었다. 끝.
