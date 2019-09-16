@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 # POST 요청만 허용할 수 있도록 'require_POST'를 import, 아래 delete에서 사용
 from django.views.decorators.http import require_POST
 # embed를 사용하면 embed() 함수에서 실행이 멈추고 IPython이 열려 현재까지의 변수 내용을 출력해 볼 수 있음.
@@ -78,11 +79,16 @@ def comment_create(request, article_pk):
     comment.article = article
     comment.save()
 
+    messages.add_message(request, messages.INFO, '댓글이 생성되었습니다.')
+
     return redirect('articles:detail', article_pk)
 
 
+@require_POST
 def comment_delete(request, comment_pk, article_pk):
     comment = Comment.objects.get(pk=comment_pk)
     comment.delete()
+
+    messages.add_message(request, messages.WARNING, '댓글이 삭제되었습니다.')
 
     return redirect('articles:detail', article_pk)

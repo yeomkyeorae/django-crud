@@ -1,5 +1,15 @@
 {% extends 'articles/base.html' %}
 {% block body %}
+{% if messages %}
+  <div class="container" id="warning">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        [{{ message.tags }}]
+        [{{ message.message }}]
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
 <h4>{{ article.id }}번 글</h4>
 <hr>
 <h2>{{ article.title }}
@@ -21,23 +31,31 @@
 </form>
 <hr>
 <h3>댓글 작성</h3>
-<form action="/articles/{{article.pk}}/comment_create/" method="POST">
+<form action="{% url 'articles:comment_create' article.pk %}" method="POST">
   {% csrf_token %}
   <input type="text" name="comment">
   <input type="submit" value="얍" class="btn btn-success">
 </form>
 <br>
 <h3>댓글 모음</h3>
-{% empty %}
-<h6> 댓글이 없어요ㅠㅠ</h6>
-{% endfor %}
 {% for comment in comments %}
-<div class="container form-inline">
-  <h6><b>{{ comment.content }}</b> &nbsp; &nbsp; &nbsp;{{ comment.created_at }}</h6> &nbsp;
-  <form action="/articles/{{article.pk}}/{{comment.pk}}/comment_delete/">
-    <input type="submit" value="삭제" class="btn btn-danger">
-  </form>
+<div class="card">
+  <div class="card-body">
+    <div class="form-inline">
+    <h6 class="card-title">{{ comment.created_at }}</h6> &nbsp;&nbsp;&nbsp;
+    <form action="{% url 'articles:comment_delete' article.pk comment.pk %}" method="POST">
+      {% csrf_token %}
+      <input type="submit" value="삭제" class="btn btn-danger">
+    </form>
+    </div>
+    <h5 class="card-text">{{ comment.content }}</h5>
+  </div>
 </div>
-<br>
 {% endfor %}
+<script>
+  var message_ele = document.getElementById("warning");
+  setTimeout(function(){ 
+    message_ele.style.display = "none"; 
+  }, 3000);
+</script>
 {% endblock %}
