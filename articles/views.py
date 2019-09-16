@@ -4,7 +4,7 @@ from django.views.decorators.http import require_POST
 # embed를 사용하면 embed() 함수에서 실행이 멈추고 IPython이 열려 현재까지의 변수 내용을 출력해 볼 수 있음.
 from IPython import embed
 
-from .models import Article
+from .models import Article, Comment
 
 
 # Create your views here.
@@ -33,8 +33,10 @@ def create(request):
 
 def detail(request, article_pk):
     article = Article.objects.get(pk=article_pk)
+    comments = article.comment_set.all()
     context = {
         'article': article,
+        'comments': comments,
     }
 
     return render(request, 'articles/detail.html', context)
@@ -51,7 +53,7 @@ def delete(request, article_pk):
 
 
 def update(request, article_pk):
-    article = Article.objects.get(pk=article_pk) 
+    article = Article.objects.get(pk=article_pk)
     # 요청 방식이 'GET'이면
     if request.method == 'GET':
         context = {
@@ -66,3 +68,21 @@ def update(request, article_pk):
         article.save()
 
         return render(request, 'articles/updated.html')
+
+
+@require_POST
+def comment_create(request, article_pk):
+    article = Article.objects.get(pk=article_pk)
+    comment = Comment()
+    comment.content = request.POST.get('comment')
+    comment.article = article
+    comment.save()
+
+    return redirect('articles:detail', article_pk)
+
+
+def comment_delete(request, comment_pk, article_pk):
+    comment = Comment.objects.get(pk=comment_pk)
+    comment.delete()
+
+    return redirect('articles:detail', article_pk)

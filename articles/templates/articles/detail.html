@@ -20,4 +20,24 @@
   <input class="btn btn-danger" type="submit" value="삭제">
 </form>
 <hr>
+<h3>댓글 작성</h3>
+<form action="/articles/{{article.pk}}/comment_create/" method="POST">
+  {% csrf_token %}
+  <input type="text" name="comment">
+  <input type="submit" value="얍" class="btn btn-success">
+</form>
+<br>
+<h3>댓글 모음</h3>
+{% empty %}
+<h6> 댓글이 없어요ㅠㅠ</h6>
+{% endfor %}
+{% for comment in comments %}
+<div class="container form-inline">
+  <h6><b>{{ comment.content }}</b> &nbsp; &nbsp; &nbsp;{{ comment.created_at }}</h6> &nbsp;
+  <form action="/articles/{{article.pk}}/{{comment.pk}}/comment_delete/">
+    <input type="submit" value="삭제" class="btn btn-danger">
+  </form>
+</div>
+<br>
+{% endfor %}
 {% endblock %}
