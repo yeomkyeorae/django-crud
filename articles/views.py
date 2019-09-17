@@ -31,10 +31,11 @@ def create(request):
         # 검증
         # embed()
         if article_form.is_valid():
-            title = article_form.cleaned_data.get('title')
-            content = article_form.cleaned_data.get('content')
-            article = Article(title=title, content=content)
-            article.save()
+            # title = article_form.cleaned_data.get('title')
+            # content = article_form.cleaned_data.get('content')
+            # article = Article(title=title, content=content)
+            # article.save()
+            article = article_form.save()
             return redirect('articles:detail', article.pk)
     
     context = {

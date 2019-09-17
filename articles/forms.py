@@ -1,25 +1,36 @@
 from django import forms
+from .models import Article
 
-class ArticleForm(forms.Form):
-    title = forms.CharField(
-        max_length = 140,
-        label = '제목',
-        widget = forms.TextInput(
-            attrs = {
-                'placeholder': '제목을 입력바랍니다.',
-            }
-        )
-    )
-    content = forms.CharField(
-        # label 내용 수정
-        label = '내용',
-        # Django form에서 HTML 속성 지정 -> widget
-        widget=forms.Textarea(
-            attrs = {
-                'class': 'my-content',
-                'placeholder': '내용을 입력바랍니다.',
-                'rows': 5,
-                'cols': 60,
-            }
-        )
-    )
+# model form
+class ArticleForm(forms.ModelForm):
+    class Meta: # 데이터에 대한 데이터, ArticleForm에 대한 정보를 담고 있다. 
+        # 예: 사진 데이터의 정보로서 위치, 감도, 일시 등
+        model = Article
+        fields = '__all__'
+        # fields = ('title', )
+        # exclue = ('title', )
+
+# 그냥 form
+# class ArticleForm(forms.Form):
+#     title = forms.CharField(
+#         max_length = 140,
+#         label = '제목',
+#         widget = forms.TextInput(
+#             attrs = {
+#                 'placeholder': '제목을 입력바랍니다.',
+#             }
+#         )
+#     )
+#     content = forms.CharField(
+#         # label 내용 수정
+#         label = '내용',
+#         # Django form에서 HTML 속성 지정 -> widget
+#         widget=forms.Textarea(
+#             attrs = {
+#                 'class': 'my-content',
+#                 'placeholder': '내용을 입력바랍니다.',
+#                 'rows': 5,
+#                 'cols': 60,
+#             }
+#         )
+#     )
