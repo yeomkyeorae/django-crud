@@ -7,6 +7,7 @@ class ArticleForm(forms.ModelForm):
     title = forms.CharField(
         max_length = 140,
         label = '제목',
+        help_text= '10자 이내로 작성바랍니다.',
         widget = forms.TextInput(
             attrs = {
                 'placeholder': '제목을 입력바랍니다.',
