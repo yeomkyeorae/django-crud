@@ -45,6 +45,7 @@ def create(request):
 
 
 
+
 def detail(request, article_pk):
     article = Article.objects.get(pk=article_pk)
     comments = article.comment_set.all()
@@ -71,17 +72,19 @@ def update(request, article_pk):
     article = Article.objects.get(pk=article_pk)
     # 요청 방식이 'GET'이면    
     if request.method == 'GET':
-        article_form = ArticleForm(initial={
-            'title': article.title, 
-            'content': article.content,
-            })
+        # article_form = ArticleForm(initial={
+        #     'title': article.title, 
+        #     'content': article.content,
+        #     })
+        article_form = ArticleForm(instance=article)
 
     else:
-        article_form = ArticleForm(request.POST)
+        article_form = ArticleForm(request.POST, instance=article)
         if article_form.is_valid():
-            article.title = article_form.cleaned_data.get('title')
-            article.content = article_form.cleaned_data.get('content')
-            article.save()
+            # article.title = article_form.cleaned_data.get('title')
+            # article.content = article_form.cleaned_data.get('content')
+            # article.save()
+            article = article_form.save()
 
             return render(request, 'articles/updated.html')
 

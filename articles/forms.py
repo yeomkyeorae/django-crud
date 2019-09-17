@@ -3,12 +3,31 @@ from .models import Article
 
 # model form
 class ArticleForm(forms.ModelForm):
+    # 위젯 설정 1.
+    title = forms.CharField(
+        max_length = 140,
+        label = '제목',
+        widget = forms.TextInput(
+            attrs = {
+                'placeholder': '제목을 입력바랍니다.',
+            }
+        )
+    )
     class Meta: # 데이터에 대한 데이터, ArticleForm에 대한 정보를 담고 있다. 
         # 예: 사진 데이터의 정보로서 위치, 감도, 일시 등
         model = Article
         fields = '__all__'
         # fields = ('title', )
         # exclue = ('title', )
+        
+        # 위젯 설정 2.
+        widgets = {
+            'title': forms.TextInput(
+                attrs = {
+                    'placeholder': '제목을 입력바랍니다.'
+                }
+            )
+        }
 
 # 그냥 form
 # class ArticleForm(forms.Form):
