@@ -6,6 +6,7 @@ from django.views.decorators.http import require_POST
 from IPython import embed
 
 from .models import Article, Comment
+from .forms import ArticleForm
 
 
 # Create your views here.
@@ -21,14 +22,25 @@ def index(request):
 def create(request):
     # request의 방식이 'GET'이면
     if request.method == 'GET':
-        return render(request, 'articles/new.html')
+        article_form = ArticleForm()
     else:
-        title = request.POST.get('title')
-        content = request.POST.get('content')
-        article = Article(title=title, content=content)
-        article.save()
-        # app_name: articles의 name이 detail인 path
-        return redirect('articles:detail', article.pk)
+    # POST 요청 -> 검증 및 저장
+        # title = request.POST.get('title')
+        # content = request.POST.get('content')
+        article_form = ArticleForm(request.POST)
+        # 검증
+        # embed()
+        if article_form.is_valid():
+            title = article_form.cleaned_data.get('title')
+            content = article_form.cleaned_data.get('content')
+            article = Article(title=title, content=content)
+            article.save()
+            return redirect('articles:detail', article.pk)
+    
+    context = {
+        'article_form': article_form,
+    }
+    return render(request, 'articles/form.html', context)
 
 
 
@@ -38,6 +50,7 @@ def detail(request, article_pk):
     context = {
         'article': article,
         'comments': comments,
+        'count': comments.count(),
     }
 
     return render(request, 'articles/detail.html', context)
@@ -55,20 +68,28 @@ def delete(request, article_pk):
 
 def update(request, article_pk):
     article = Article.objects.get(pk=article_pk)
-    # 요청 방식이 'GET'이면
+    # 요청 방식이 'GET'이면    
     if request.method == 'GET':
-        context = {
-            'article': article,
-            'article_pk': article_pk,
-        }
+        article_form = ArticleForm(initial={
+            'title': article.title, 
+            'content': article.content,
+            })
 
-        return render(request, 'articles/update.html', context)
     else:
-        article.title = request.POST.get('title')
-        article.content = request.POST.get('content')
-        article.save()
+        article_form = ArticleForm(request.POST)
+        if article_form.is_valid():
+            article.title = article_form.cleaned_data.get('title')
+            article.content = article_form.cleaned_data.get('content')
+            article.save()
 
-        return render(request, 'articles/updated.html')
+            return render(request, 'articles/updated.html')
+
+    context = {
+        'article_form': article_form,
+        # 'article': article,
+        # 'article_pk': article_pk,
+    }
+    return render(request, 'articles/form.html', context)
 
 
 @require_POST
@@ -89,6 +110,6 @@ def comment_delete(request, comment_pk, article_pk):
     comment = Comment.objects.get(pk=comment_pk)
     comment.delete()
 
-    messages.add_message(request, messages.WARNING, '댓글이 삭제되었습니다.')
+    messages.warning(request, '댓글이 삭제되었습니다.')
 
     return redirect('articles:detail', article_pk)
