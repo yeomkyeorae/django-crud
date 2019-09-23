@@ -1,6 +1,14 @@
 {% extends 'articles/base.html' %}
+{% load static %}
+{% block css %}
+  <link rel="stylesheet" href="{% static 'articles/style.css'%}">
+{% endblock %}
 {% block body %}
-  <h1 class="text-center">Board</h1>
+  <img class="rounded text-center" src="{% static 'articles/messi.jpeg'%}" alt="" style="width: 95%">
+  <br>
+  <h1 class="text-center">
+    Board
+  </h1>
   {% comment %} url 파일에서 app_name이 articles의 name이 create인 path를 url로 {% endcomment %}
   <a href="{% url 'articles:create' %}" class="btn btn-success mb-20">글 작성하기</a>
   <table class="table table-muted">
