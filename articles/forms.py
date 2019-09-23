@@ -1,5 +1,5 @@
 from django import forms
-from .models import Article
+from .models import Article, Comment
 
 # model form
 class ArticleForm(forms.ModelForm):
@@ -29,6 +29,13 @@ class ArticleForm(forms.ModelForm):
                 }
             )
         }
+
+
+class CommentForm(forms.ModelForm):
+    
+    class Meta:
+        model = Comment
+        fields = ('content', )
 
 # 그냥 form
 # class ArticleForm(forms.Form):

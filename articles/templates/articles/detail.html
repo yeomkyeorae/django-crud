@@ -1,4 +1,5 @@
 {% extends 'articles/base.html' %}
+{% load bootstrap4 %} <!-- load bootstrap4는 항상 해당 템플릿에서 작성 또한 base 이후에 작성돼야 함-->
 {% block body %}
 <h4>{{ article.id }}번 글</h4>
 <hr>
@@ -21,10 +22,12 @@
 </form>
 <hr>
 <h3>댓글 작성</h3>
-<form action="{% url 'articles:comment_create' article.pk %}" method="POST">
+<form action="comment_create/" method="POST">
   {% csrf_token %}
-  <input type="text" name="comment" placeholder="댓글을 작성하세요">
-  <input type="submit" value="댓글 달기" class="btn btn-success">
+  {% bootstrap_form comment_form %}
+  {% buttons %}
+  <button type="submit" class="btn btn-primary">댓글 달기</button>
+  {% endbuttons %}
 </form>
 <br>
 <h3>댓글 모음({{count}})</h3>

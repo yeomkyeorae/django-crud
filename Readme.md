@@ -461,5 +461,115 @@ def create(request):
 
 #### 2. ModelForm
 
+​	`forms.py` 를 살펴보자
 
+```python
+from django import forms
+from .models import Article
+
+class ArticleForm(forms.ModelForm):
+    title = forms.CharField(
+    	max_length = 10,
+        label = '제목',
+        help_text = '10자 이내로 작성바랍니다.',
+        widget = forms.TextInput(
+        	attrs = {
+                'placeholder': '제목을 입력바랍니다.',
+            }
+        )
+    )
+    
+    class Meta:
+        model = Article
+        fields = '__all__'
+        
+        widgets = {
+            'title': forms.TextInput(
+            	attrs = {
+                    'placeholder': '제목을 입력바랍니다.'
+                }
+            )
+        }
+```
+
+- 일반 `Form`과 달라진 점은 상속하는 대상이 `forms.ModelForm`이라는 것.
+- 결정적으로 내부 클래스로 `Meta`를 선언해서 이용하고자 하는 `Model`을 `model = Article`처럼 명시해주어야 한다는 사실이다.
+- `fields`변수를 통해서 어떤 컬럼을 이용할지 정할 수 있다.
+
+
+
+​	`views.py`의 `update`함수를 살펴보자.
+
+```python
+def update(request, article_pk):
+    article = Article.objects.get(pk=article_pk)
+ 
+    if request.method == 'GET':
+        article_form = ArticleForm(instance=article)
+
+    else:
+        article_form = ArticleForm(request.POST, instance=article)
+        if article_form.is_valid():
+            article = article_form.save()
+            return render(request, 'articles/updated.html')
+
+    context = {
+        'article_form': article_form,
+    }
+    return render(request, 'articles/form.html', context)
+```
+
+- 확실히 일반 `Form`보다 훨씬 간결해졌다.
+- `Form`과 다르게 어떤 `Model`의 instance인지 명시하기 위해 `ArticleForm`인스턴스를 만들 때, 추가 파라미터로 `instance=article`를 입력한다.
+
+
+
+​	`form.html`를 살펴보자. `form.html`를 사용하면 동일한 기능을 하는 html 파일을 통합하여 관리할 수 있다. 예를 들면 `create.html`와 `update.html`은 같은 form을 이용하므로 `form.html`로 관리하면 편리하다.
+
+```html
+{% extends 'articles/base.html' %}
+{% load bootstrap4 %}
+
+{% block body %}
+{% if request.resolver_match.url_name == 'create' %}
+    <h1 class="text-center">글 작성하기</h1>
+{% else %}
+    <h1 class="text-center">글 수정하기</h1>
+{% endif %}
+<form role="form" action="" method="POST">
+  {% csrf_token %}
+  {% bootstrap_form article_form %}
+  {% buttons %}
+  <button type="submit" class="btn btn-primary">Submit</button>
+  {% endbuttons %}
+</form>
+{% endblock %}
+```
+
+- `{% load bootstrap4 %}`를 이용해 django template에서 손쉽게 `bootstrap`을 이용할 수 있다. [django-bootstrap4](https://github.com/zostera/django-bootstrap4), `form`태그 내부에 `{% boostrap_form article_form %}` 명시해서 사용하였다. 
+- `{% if request.resolver_match.url_name == 'create' %}` -> `urls.py`에서 `path`의 `name`이 `create`이면 이라는 뜻.
+
+
+
+## ※ get_object_or_404
+
+`Model`의 `instance`를 생성할 때 `get_object_or_404`로 만들 수 있다. 이것으로 `instance`를 만들면 존재하지 않는 `instance`를 `url`로 호출할 때 `500 Server Error`가 아닌 `404 error` message를 전달하도록 해준다.
+
+ ```python
+# ...
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Article, Comment
+
+def detail(request, article_pk):
+    # article = Article.objects.get(pk=article_pk)
+    article = get_object_or_404(Article, pk=article_pk)
+    comments = article.comment_set.all()
+    context = {
+        'article': article,
+        'comments': comments,
+        'count': comments.count(),
+    }
+
+    return render(request, 'articles/detail.html', context)
+ ```
 

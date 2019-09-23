@@ -6,7 +6,7 @@ from django.views.decorators.http import require_POST, require_GET
 from IPython import embed
 
 from .models import Article, Comment
-from .forms import ArticleForm
+from .forms import ArticleForm, CommentForm
 
 
 # Create your views here.
@@ -49,11 +49,15 @@ def create(request):
 def detail(request, article_pk):
     # article = Article.objects.get(pk=article_pk)
     article = get_object_or_404(Article, pk=article_pk)
+    
+    comment_form = CommentForm()
+
     comments = article.comment_set.all()
     context = {
         'article': article,
         'comments': comments,
         'count': comments.count(),
+        'comment_form': comment_form,
     }
 
     return render(request, 'articles/detail.html', context)
@@ -100,14 +104,26 @@ def update(request, article_pk):
 @require_POST
 def comment_create(request, article_pk):
     article = Article.objects.get(pk=article_pk)
-    comment = Comment()
-    comment.content = request.POST.get('comment')
-    comment.article = article
-    comment.save()
+    # 1. modelForm에 사용자 입력 값 넣고
+    comment_form = CommentForm(request.POST)
+    # 2. 검증하고
+    if comment_form.is_valid():
+    # 3. 맞으면 저장
+        # 3-1. 사용자 입력값으로 comment instance 생성 (저장은 x)
+        comment = comment_form.save(commit=False)
+        # 3-2. FK 넣고 저장
+        comment.article = article
+        comment.save()
+        messages.add_message(request, messages.INFO, '댓글이 생성되었습니다.')
 
-    messages.add_message(request, messages.INFO, '댓글이 생성되었습니다.')
-
-    return redirect('articles:detail', article_pk)
+    # 4. redirect
+        return redirect('articles:detail', article_pk)
+    # comment = Comment()
+    # comment.content = request.POST.get('comment')
+    # comment.article = article
+    # comment.save()
+    
+    # return redirect('articles:detail', article_pk)
 
 
 @require_POST
