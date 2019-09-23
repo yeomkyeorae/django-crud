@@ -49,8 +49,6 @@ def create(request):
     return render(request, 'articles/form.html', context)
 
 
-
-
 def detail(request, article_pk):
     # article = Article.objects.get(pk=article_pk)
     article = get_object_or_404(Article, pk=article_pk)
@@ -68,6 +66,7 @@ def detail(request, article_pk):
     }
 
     return render(request, 'articles/detail.html', context)
+
 
 # POST 요청만 받아들이기 위한 decorator
 @require_POST
