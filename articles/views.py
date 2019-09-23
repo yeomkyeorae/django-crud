@@ -39,6 +39,7 @@ def create(request):
             # article = article_form.save()
             article = article_form.save(commit=False)
             article.image = request.FILES.get('image')
+            article.image_thumbnail = article.image
             article.save()
 
             return redirect('articles:detail', article.pk)

@@ -14,8 +14,8 @@ class Article(models.Model):
     content = models.TextField()
     image = models.ImageField(blank=True)
 
-    # ImageSpectField : Input 하나만 받고 잘라서 저장
-    # ProcessedImageField : Input 받은 것을 잘라서 저장
+    # ImageSpectField : Input 하나만 받고 잘라서 저장(이미 입력받은 image에서 자름)
+    # ProcessedImageField : Input 받은 것을 잘라서 저장(입력을 따로 받아서 자름)
     image_thumbnail = ProcessedImageField(
         processors=[ResizeToFill(300, 300)],
         format='JPEG',
@@ -23,7 +23,6 @@ class Article(models.Model):
     )
     # resize to fill : 300 * 300
     # resize to fit : 긴쪽을(너비 혹은 높이) 300에 맞추고 비율에 맞게 자름
-
 
     # username = models.CharField(max_length=10)
     # DateTimeField

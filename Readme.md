@@ -573,3 +573,112 @@ def detail(request, article_pk):
     return render(request, 'articles/detail.html', context)
  ```
 
+
+
+# 6. Add static files
+
+`CSS`, `Javascript`, `Bootstrap`, `favicon(title에 있는 작은 icon)` 등의 파일들은 `static` 폴더에 보관하는 것이 편리하다.
+
+`project`이름(`crud`) 아래 `assets`라는 이름으로 폴더를 만들어 관리한다.
+
+`Settings`에 있는 기본 `STATIC_URL`외에도 `STATICFILES_DIRS` 변수를 추가해 관리해 주어야 한다. 예를 들어,
+
+```python
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'crud', 'assets')
+]
+```
+
+`html`에서 `static` 파일을 불러들일 때는 반드시 `html` 위에`load static`을 명시해 주어야 한다. `base.html`을 `extends`할 경우에는 반드시 그 아래 작성해야 한다. 예를 들어,
+
+```html
+{% extends 'articles/base.html' %}
+{% load static %}
+<!-- -->
+<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+<!-- -->
+```
+
+ `load`할 때는 `{% static '~' %}` 식으로 작성해야 함을 잊지 말자. (static 경로에도 주의)
+
+
+
+
+
+# 7. Add image file upload
+
+- `models.py`
+
+  - `models.ImageField`를 사용한다.
+  - `thumnail`을 사용할 경우 [imagekit](https://github.com/matthewwithanm/django-imagekit)을 install해 사용한다.
+
+  ```python
+  from django.db import models
+  from imagekit.models import ProcessedImageField, ImageSpecField
+  from imagekit.processors import ResizeToFill, ResizeToFit, Thumbnail
+  
+  class Article(models.Model):
+      title = models.CharField(max_length=30)
+      content = models.TextField()
+      image = models.ImageField(blank=True)  # blank=True를 사용하면 기존 DB에 영향을 주지 											않으면서 column을 추가할 수 있다.
+      image_thumbnail = ProcessedImageField(
+          processors=[ResizeToFill(300, 300)],
+          format='JPEG',
+          options={'quality': 80},
+      )
+  ```
+
+  - `thumbnail`에 사용할 수 있는 대표적인 함수(?)에는 `ImageSpecField`와 `ProcessedImageField`가 있는데 전자는 `image`으로 삼아 썸네일화 하지만, 후자는 따로 입력을 받아 썸네일화한다. 
+
+
+
+- `views.py`
+
+  - `views.py`에서 이미지를 저장하려면 `request.POST` 이외에 `request.FILES`를 필요로 한다.
+  - 예시 코드는 아래와 같다.
+
+  ```python
+  def create(request):
+      if request.method == 'GET':
+          article_form = ArticleForm()
+      else:
+          # ArticleForm(request.POST, request.FILES)를 활용할 수도 있다.
+          article_form = ArticleForm(request.POST)
+          if article_form.is_valid():
+              article = article_form.save(commit=False) 
+              # commit=False를 하면 바로 저장되지 않고 추가적으로 데이터를 저장할 수 있게 한다.
+              article.image = request.FILES.get('image')
+              article.image_thumbnail = article.image	# ProcessedImageField를 사용해서
+              article.save()
+              
+              return redirect('articles:detail', article.pk)
+        # ...
+  ```
+
+
+
+- `media` 폴더
+
+  `media` 폴더를 사용해서 `이미지`, `썸네일`, `동영상` 등을 관리하자. `media`를 사용하기 위해서는 `settgins.py`에 `MEDIA_ROOT`와 `MEDIA`_URL`을 등록해야 한다.
+
+  ```python
+  MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+  MEDIA_URL = '/media/'
+  ```
+
+  
+
+- `favicon`
+
+  - `favicon`은 page의 `title` 옆에 있는 작은 `icon`을 말한다.
+  - `favicon`이미지는 [여기](https://www.favicon-generator.org/)에서 기존 이미지를 변환하여 사용할 수 있다.
+  - 아래와 같이 `load`해 사용하자
+
+  ```html
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon/favicon-32x32.png' %}">
+    <link rel="shortcut icon" href="{% static 'favicon/favicon.ico'%}" type="image/x-icon">
+  ```
+
+  
+
+  

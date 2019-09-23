@@ -18,6 +18,7 @@ class ArticleForm(forms.ModelForm):
         # 예: 사진 데이터의 정보로서 위치, 감도, 일시 등
         model = Article
         fields = '__all__'
+        exclude = ('image_thumbnail', )
         # fields = ('title', )
         # exclue = ('title', )
         
