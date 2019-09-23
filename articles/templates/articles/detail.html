@@ -1,5 +1,6 @@
 {% extends 'articles/base.html' %}
-{% load bootstrap4 %} <!-- load bootstrap4는 항상 해당 템플릿에서 작성 또한 base 이후에 작성돼야 함-->
+{% load bootstrap4 %}
+<!-- load bootstrap4는 항상 해당 템플릿에서 작성 또한 base 이후에 작성돼야 함-->
 {% block body %}
 <h4>{{ article.id }}번 글</h4>
 <hr>
@@ -9,6 +10,9 @@
 <h6>작성 일자 : {{ article.created_at }}</h6>
 <h6>수정 일자 : {{ article.updated_at }}</h6>
 <hr>
+{% if image %}
+<img src="{{ image.url }}" alt="nothing" style="width: 50%">
+{% endif %}
 <div class="container border border-muted">
   <p>{{ article.content }}</p>
 </div>
@@ -35,11 +39,11 @@
 <div class="card">
   <div class="card-body">
     <div class="form-inline">
-    <h6 class="card-title">{{ comment.created_at }}</h6> &nbsp;&nbsp;&nbsp;
-    <form action="{% url 'articles:comment_delete' article.pk comment.pk %}" method="POST">
-      {% csrf_token %}
-      <input type="submit" value="삭제" class="btn btn-danger">
-    </form>
+      <h6 class="card-title">{{ comment.created_at }}</h6> &nbsp;&nbsp;&nbsp;
+      <form action="{% url 'articles:comment_delete' article.pk comment.pk %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="삭제" class="btn btn-danger">
+      </form>
     </div>
     <h5 class="card-text">{{ comment.content }}</h5>
   </div>
@@ -47,8 +51,8 @@
 {% endfor %}
 <script>
   var message_ele = document.getElementById("warning");
-  setTimeout(function(){ 
-    message_ele.style.display = "none"; 
+  setTimeout(function () {
+    message_ele.style.display = "none";
   }, 3000);
 </script>
 {% endblock %}

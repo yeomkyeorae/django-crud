@@ -35,7 +35,12 @@ def create(request):
             # content = article_form.cleaned_data.get('content')
             # article = Article(title=title, content=content)
             # article.save()
-            article = article_form.save()
+
+            # article = article_form.save()
+            article = article_form.save(commit=False)
+            article.image = request.FILES.get('image')
+            article.save()
+
             return redirect('articles:detail', article.pk)
     
     context = {
@@ -53,11 +58,13 @@ def detail(request, article_pk):
     comment_form = CommentForm()
 
     comments = article.comment_set.all()
+       
     context = {
         'article': article,
         'comments': comments,
         'count': comments.count(),
         'comment_form': comment_form,
+        'image': article.image,
     }
 
     return render(request, 'articles/detail.html', context)

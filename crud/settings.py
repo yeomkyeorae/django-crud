@@ -120,9 +120,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = '/static/' # static file들을 모두 모아서 해당 URL로 서빙한다.
+# static file들을 모두 모아서 해당 URL로 표현된다. (물리 폴더를 뜻하는 것이 아니다.)
+# /static/bootstrap
+# /static/articles/style.css
+STATIC_URL = '/static/' 
+# static file 물리 위치 지정
+# 기본적으로는 app에 있는 static 폴더들을 모두 관리하며, 아래에 임의의 폴더들을 추가할 수 있다.
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'crud', 'assets')
 ]
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

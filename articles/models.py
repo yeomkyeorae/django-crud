@@ -8,8 +8,9 @@ class Article(models.Model):
     # id : integer 자동으로 정의(Primary Key)
     # id = models.AutoField(primary_key=True) -> Integer 값이 자동으로 하나씩 증가(AUTOINCREMENT)
     # CharField - 필수 인자로 max_length 지정
-    title = models.CharField(max_length=10)
+    title = models.CharField(max_length=30)
     content = models.TextField()
+    image = models.ImageField(blank=True)
     # username = models.CharField(max_length=10)
     # DateTimeField
     #   auto_now_add : 생성시 자동으로 입력
