@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 # POST 요청만 허용할 수 있도록 'require_POST'를 import, 아래 delete에서 사용
 from django.views.decorators.http import require_POST, require_GET
 # embed를 사용하면 embed() 함수에서 실행이 멈추고 IPython이 열려 현재까지의 변수 내용을 출력해 볼 수 있음.
@@ -20,8 +21,13 @@ def index(request):
     return render(request, 'articles/index.html', context)
 
 
+@login_required
 def create(request):
     # request의 방식이 'GET'이면
+
+    # if not request.user.is_authenticated:
+    #     return redirect('accounts:login')
+
     if request.method == 'GET':
         article_form = ArticleForm()
     else:

@@ -10,7 +10,9 @@
     Board
   </h1>
   {% comment %} url 파일에서 app_name이 articles의 name이 create인 path를 url로 {% endcomment %}
-  <a href="{% url 'articles:create' %}" class="btn btn-success mb-20">글 작성하기</a>
+  {% if user.is_authenticated %}
+    <a href="{% url 'articles:create' %}" class="btn btn-success mb-20">글 작성하기</a>
+  {% endif %}
   <table class="table table-muted">
   <thead class="thead-gray">
     <tr class="bg-primary">
