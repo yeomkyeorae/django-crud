@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',   # static file css, js, bootstrap  
     'django_extensions',
     'articles',
+    'accounts',
     'bootstrap4',
     'imagekit',
 ]

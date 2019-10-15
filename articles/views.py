@@ -12,6 +12,7 @@ from .forms import ArticleForm, CommentForm
 # Create your views here.
 def index(request):
     articles = Article.objects.all()
+    # embed()
     context = {
         'articles': articles,
     }
@@ -82,6 +83,7 @@ def delete(request, article_pk):
 
 def update(request, article_pk):
     article = Article.objects.get(pk=article_pk)
+    # article = get_object_or_404(Article, article_pk)
     # 요청 방식이 'GET'이면    
     if request.method == 'GET':
         # article_form = ArticleForm(initial={
@@ -96,7 +98,7 @@ def update(request, article_pk):
             # article.title = article_form.cleaned_data.get('title')
             # article.content = article_form.cleaned_data.get('content')
             # article.save()
-            article = article_form.save()
+            article = article_form.save()  # return 되는 것은 article instance
 
             return render(request, 'articles/updated.html')
 
