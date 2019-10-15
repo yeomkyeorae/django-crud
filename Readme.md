@@ -681,4 +681,97 @@ STATICFILES_DIRS = [
 
   
 
-  
+
+
+
+## 8. Accounts(Signup, login, logout, authentication)
+
+1. First of all, Create App `Accounts`, enroll App, make urls, ...
+
+2. `views.py`에서`signup(회원가입)`, `login(로그인)`, `logout(로그아웃)`의 logic은 기존 게시글의 `create`와 유사하다.
+
+   > `Signup`(회원가입)
+
+   ```python
+   from django.contrib.auth.forms import UserCreationForm, Authentication
+   from django.contrib.auth import login as auth_login
+   from django.contrib.auth import logout as auth_logout
+   
+   def signup(request):
+       if request.user.is_authenticated:
+           return redirect('articles:index')
+       if request.method == 'POST':
+           user_creation_form = UserCreationForm(request.POST)
+           if user_creation_form.is_valid():
+               user_creation_form.save()
+               return redirect('articles:index')
+       else:
+           user_creation_form = UserCreationForm()
+      	context = {
+           'user_creation_form': user_creation_form,
+       }
+       
+       return render(request, 'accounts/signup.html', context)
+   ```
+
+   - `회원가입`과 `로그인` 기능을 구현하기 위해 필요한 모듈은 `django.contrib.auth`에 포함돼 있으며, 추가적으로 `form`기능도 `django.contrib.auth.forms`에 회원가입과 로그인에 해당하는 `UseCreationForm` 과 `Authentication`에 있다.
+   - `사용자`가 로그인이 되어있는지 판별하기 위해 `request.user.is_authenticated`변수를 활용하는데, 로그인이 되어있을 경우 `request`가 별도 작업없이도 `user`정보를 이미 가지고 있다. 
+   - 그 외에는 `create`와 유사하다.
+
+   > `Login`
+
+   ```python
+   def login(request):
+       if request.method == 'POST':
+           auth_form = AuthenticationForm(request, request.POST)
+           if auth_form.is_valid():
+               user = auth_form.get_user()
+               auth_login(request, user)
+               return redirect(request.GET.get('next') or 'articles:index')
+       else:
+           auth_form = AuthenticationForm()
+       context = {
+           'form': form,
+       }
+       
+       return render(request, 'accounts/login.html', context)
+   ```
+
+   - `login`은 `Session`(?)을 생성해야 하므로 `Create`와 구성이 약간 다르다.
+   - 다른 `form`과는 다르게 `AuthenticationForm`의 인자에 `request`와 `request.POST`가 순서대로 들어간다.
+   - `auth_login`을 통해 로그인 로직 실행, 인자로 `request`와 `user`.
+   - `request.GET.get('next') or 'articles:index'` 부분은 로그인이 되어 있는 상태이면 원래 실행될 상태(`next`)로 바꾸고, 아니라면 `index`페이지로 전환한다.
+
+   > `Logout`
+
+   ```python
+   def logout(request):
+       auth_logout(request)
+       return redirect('articles:index')
+   ```
+
+   - `auth_logout`을 통해 로그아웃 로직을 실행
+
+3. `html` logic
+
+   > 로그인이 가능해짐에 따라서 `html`에서 로그인 상태일 때, 로그아웃 상태일 때 별로 서로 다른 logic을 만들 수 있다.
+
+   ```html
+   {% if user.is_authenticated %}
+   <!-- 로그인 상태 -->
+   <li class="nav-item">
+     <a class="nav-link" href="{% url 'accounts:logout'%}">로그아웃</a>
+   </li>
+   {% else %}
+   <!-- 로그아웃 상태 -->
+   <li class="nav-item">
+     <a class="nav-link" href="{% url 'accounts:signup'%}">회원가입</a>
+   </li>
+   <li class="nav-item">
+     <a class="nav-link" href="{% url 'accounts:login'%}">로그인</a>
+   </li>
+   {% endif %}
+   ```
+
+   - `context`에 `user`정보를 넘겨주지 않아도 `request`에 기본적으로 `user`정보를 갖고 있으므로 `user.is_authenticated`를 사용해 로그인이 되어 있는지 아닌지 확인할 수 있다.
+   - 로그인이 되어있다면 로그아웃 `a`태그를 활성화하고, 로그아웃 상태이면 회원가입과 로그인 `a`태그를 활성화한다.
