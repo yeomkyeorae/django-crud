@@ -18,7 +18,7 @@ class ArticleForm(forms.ModelForm):
         # 예: 사진 데이터의 정보로서 위치, 감도, 일시 등
         model = Article
         fields = '__all__'
-        exclude = ('image_thumbnail', )
+        exclude = ('image_thumbnail', 'user')
         # fields = ('title', )
         # exclue = ('title', )
         
@@ -36,7 +36,7 @@ class CommentForm(forms.ModelForm):
     
     class Meta:
         model = Comment
-        fields = ('content', )
+        fields = ('content',)
 
 # 그냥 form
 # class ArticleForm(forms.Form):

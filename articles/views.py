@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST, require_GET
 # embed를 사용하면 embed() 함수에서 실행이 멈추고 IPython이 열려 현재까지의 변수 내용을 출력해 볼 수 있음.
 from IPython import embed
-
+from accounts.models import User
+# from django.contrib.auth import get_user_model
 from .models import Article, Comment
 from .forms import ArticleForm, CommentForm
 
@@ -47,6 +48,7 @@ def create(request):
             article = article_form.save(commit=False)
             article.image = request.FILES.get('image')
             article.image_thumbnail = article.image
+            article.user = request.user
             article.save()
 
             return redirect('articles:detail', article.pk)
@@ -106,7 +108,7 @@ def update(request, article_pk):
             # article.save()
             article = article_form.save()  # return 되는 것은 article instance
 
-            return render(request, 'articles/updated.html')
+            return redirect('articles:detail', article_pk)
 
     context = {
         'article_form': article_form,
@@ -128,6 +130,7 @@ def comment_create(request, article_pk):
         comment = comment_form.save(commit=False)
         # 3-2. FK 넣고 저장
         comment.article = article
+        comment.user = request.user
         comment.save()
         messages.add_message(request, messages.INFO, '댓글이 생성되었습니다.')
 

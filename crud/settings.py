@@ -138,4 +138,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # AUTH
-LOGIN_URL = '/accounts/login/'  # default
+LOGIN_URL = '/accounts/login/'  # default! @login_required에서 사용! login이 안되어있을 시 이동하는 곳
+AUTH_USER_MODEL = 'accounts.User'   # default : 'auth.User'

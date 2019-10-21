@@ -18,6 +18,7 @@
     <tr class="bg-primary">
       <th scope="col">#</th>
       <th scope="col">제목</th>
+      <th scope="col">글쓴이</th>
       <th scope="col">작성일자</th>
     </tr>
   </thead>
@@ -26,6 +27,7 @@
     <tr>
       <th scope="row">{{ article.id }}</th>
       <td><a href="{{ article.pk }}">{{ article.title }}</a></td>
+      <td>{{ article.user }}</td>
       <td>{{ article.created_at }}</td>
     </tr>
     {% endfor %}

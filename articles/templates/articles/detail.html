@@ -7,6 +7,7 @@
 <h2>{{ article.title }}
 </h2>
 <hr>
+<h6>글쓴이 : {{ article.user }}</h6>
 <h6>작성 일자 : {{ article.created_at }}</h6>
 <h6>수정 일자 : {{ article.updated_at }}</h6>
 <hr>
@@ -17,13 +18,15 @@
   <p>{{ article.content }}</p>
 </div>
 <br>
-<a href="{% url 'articles:index' %}">목록으로</a>
-<a href="{% url 'articles:update' article.pk %}">수정하기</a>
+<a href="{% url 'articles:index' %}"><button class="btn btn-primary">목록으로</button></a>
+{% if article.user == user %}
+<a href="{% url 'articles:update' article.pk %}"><button class="btn btn-warning" style="color: white">수정하기</button></a>
 <form action="{% url 'articles:delete' article.pk %}" method="POST"
-  onclick="return confirm('Do you want to delete it?')">
+  onclick="return confirm('Do you want to delete it?')" style="display: inline-block">
   {% csrf_token %}
-  <input class="btn btn-danger" type="submit" value="삭제">
+  <input class="btn btn-danger" type="submit" value="삭제하기">
 </form>
+{% endif %}
 <hr>
 <h3>댓글 작성</h3>
 <form action="comment_create/" method="POST">
@@ -42,10 +45,13 @@
       <h6 class="card-title">{{ comment.created_at }}</h6> &nbsp;&nbsp;&nbsp;
       <form action="{% url 'articles:comment_delete' article.pk comment.pk %}" method="POST">
         {% csrf_token %}
+        {% if comment.user == user %}
         <input type="submit" value="삭제" class="btn btn-danger">
+        {% endif %}
       </form>
     </div>
     <h5 class="card-text">{{ comment.content }}</h5>
+    <h6 class="card-text text-success">{{ comment.user }}</h5>
   </div>
 </div>
 {% endfor %}
