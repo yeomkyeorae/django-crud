@@ -4,7 +4,7 @@
 {% block body %}
 <form role="form" action="" method="POST">
   {% csrf_token %}
-  {% bootstrap_form user_creation_form %}
+  {% bootstrap_form form %}
   {% buttons %}
   <button type="submit" class="btn btn-primary">Submit</button>
   {% endbuttons %}

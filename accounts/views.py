@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
+from django.contrib.auth.decorators import login_required
+from .forms import CustomUserChangeForm
 
 
 # Create your views here.
@@ -17,10 +20,10 @@ def signup(request):
     else:
         user_creation_form = UserCreationForm()
     context = {
-        'user_creation_form': user_creation_form,
+        'form': user_creation_form,
     }
 
-    return render(request, 'accounts/signup.html', context)
+    return render(request, 'accounts/form.html', context)
 
 
 # login은 Session을 생성해야하므로 게시글 create와 형식이 조금 다르다.
@@ -47,3 +50,34 @@ def login(request):
 def logout(request):
     auth_logout(request)
     return redirect('articles:index')
+
+
+@login_required
+def update(request):
+    if request.method == 'POST':
+        form = CustomUserChangeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('articles:index')
+    else:
+        form = CustomUserChangeForm(instance=request.user)
+    context = {
+        'form': form,
+    }
+    return render(request, 'accounts/form.html', context)
+
+
+@login_required
+def password_change(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)    # 비밀번호 변경 후 로그인 상태가 유지되도록
+            return redirect('articles:index')
+    else:
+        form = PasswordChangeForm(request.user)
+    context = {
+        'form': form,
+    }
+    return render(request, 'accounts/form.html', context)
