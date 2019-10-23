@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponse
 # POST 요청만 허용할 수 있도록 'require_POST'를 import, 아래 delete에서 사용
 from django.views.decorators.http import require_POST, require_GET
 # embed를 사용하면 embed() 함수에서 실행이 멈추고 IPython이 열려 현재까지의 변수 내용을 출력해 볼 수 있음.
@@ -127,26 +127,25 @@ def update(request, article_pk):
 
 @require_POST
 def comment_create(request, article_pk):
-    if not request.user.is_authenticated:
-        return redirect('articles:detail', article_pk)
-    article = Article.objects.get(pk=article_pk)
-    # 1. modelForm에 사용자 입력 값 넣고
-    comment_form = CommentForm(request.POST)
-    # 2. 검증하고
-    if comment_form.is_valid():
-    # 3. 맞으면 저장
-        # 3-1. 사용자 입력값으로 comment instance 생성 (저장은 x)
-        comment = comment_form.save(commit=False)
-        # 3-2. FK 넣고 저장
-        comment.article = article
-        comment.user = request.user
-        comment.save()
-        messages.add_message(request, messages.INFO, '댓글이 생성되었습니다.')
+    if request.user.is_authenticated:
+        article = Article.objects.get(pk=article_pk)
+        # 1. modelForm에 사용자 입력 값 넣고
+        comment_form = CommentForm(request.POST)
+        # 2. 검증하고
+        if comment_form.is_valid():
+        # 3. 맞으면 저장
+            # 3-1. 사용자 입력값으로 comment instance 생성 (저장은 x)
+            comment = comment_form.save(commit=False)
+            # 3-2. FK 넣고 저장
+            comment.article = article
+            comment.user = request.user
+            comment.save()
+            messages.add_message(request, messages.INFO, '댓글이 생성되었습니다.')
 
-    # 4. redirect
-        return redirect('articles:detail', article_pk)
+        # 4. redirect
+            return redirect('articles:detail', article_pk)
     else:
-        return HttpResponseForbidden()
+        return HttpResponse('Unauthorized', status=401)
     # comment = Comment()
     # comment.content = request.POST.get('comment')
     # comment.article = article
@@ -168,9 +167,11 @@ def comment_delete(request, comment_pk, article_pk):
         return HttpResponseForbidden()
 
 
+@login_required
 def like(request, article_pk):
     article = get_object_or_404(Article, pk=article_pk)
     # 좋아요를 누른 적이 있다면
+    # if article.like_users.filter(id=request.user.id):
     if request.user in article.like_users.all():
         request.user.like_articles.remove(article)
     else:

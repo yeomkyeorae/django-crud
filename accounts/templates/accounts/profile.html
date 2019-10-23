@@ -1,0 +1,68 @@
+{% extends 'accounts/base.html' %}
+{% block body %}
+<h1>{{ user }}님의 프로필</h1>
+<a href="{% url 'articles:index' %}" style="display:inline-block">
+    <input type="submit" value="홈으로" class="btn btn-danger">
+</a>
+<br>
+<br>
+<hr>
+<button class="btn btn-primary disabled">작성 게시글 수 : {{user_profile.article_set.count}}개</button>
+  <table class="table table-muted">
+  <thead class="thead-gray">
+    <tr class="bg-primary">
+      <th scope="col">#</th>
+      <th scope="col">제목</th>
+      <th scope="col">작성일자</th>
+    </tr>
+  </thead>
+  <tbody class="mt-5">
+    {% for article in user_profile.article_set.all %}
+    <tr>
+      <th scope="row">{{ article.id }}</th>
+      <td><a href="{{ article.pk }}">{{ article.title }}</a></td>
+      <td>{{ article.created_at }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<br>
+<button class="btn btn-success disabled">작성 댓글 수: {{user_profile.comment_set.count}}개</button>
+  <table class="table table-muted">
+  <thead class="thead-gray">
+    <tr class="bg-success">
+      <th scope="col">#</th>
+      <th scope="col">글 제목</th>
+      <th scope="col">댓글</th>
+      <th scope="col">작성일자</th>
+    </tr>
+  </thead>
+  <tbody class="mt-5">
+    {% for comment in user_profile.comment_set.all %}
+    <tr>
+      <th scope="row">{{ comment.id }}</th>
+      <td><a href="{% url 'articles:detail' comment.article.pk %}">{{ comment.article.title }}</a></td>
+      <td>{{ comment.content }}</td>
+      <td>{{ comment.created_at }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<button class="btn btn-warning disabled">좋아요 개수 : {{user_profile.like_articles.count}}개</button>
+  <table class="table table-muted">
+  <thead class="thead-gray">
+    <tr class="bg-warning">
+      <th scope="col">#</th>
+      <th scope="col">글 제목</th>
+    </tr>
+  </thead>
+  <tbody class="mt-5">
+    {% for article in user_profile.like_articles.all %}
+    <tr>
+      <th scope="row">{{ article.id }}</th>
+      <td><a href="{% url 'articles:detail' article.pk %}">{{ article.title }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

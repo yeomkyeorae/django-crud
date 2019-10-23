@@ -9,4 +9,5 @@ urlpatterns = [
     path('logout/', views.logout, name="logout"),
     path('update/', views.update, name='update'),
     path('password/', views.password_change, name='update_password'),
+    path('<int:account_pk>/', views.profile, name="profile"),
 ]
