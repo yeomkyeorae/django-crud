@@ -89,10 +89,22 @@ def password_change(request):
 def profile(request, account_pk):
     User = get_user_model()
     user = get_object_or_404(User, pk=account_pk)
-    if user == request.user:
-        context = {
-            'user_profile': user,
-        }
-        return render(request, 'accounts/profile.html', context)
-    else:
-        return HttpResponse('Unauthorized', status=401)
+
+    context = {
+        'user_profile': user,
+    }
+    return render(request, 'accounts/profile.html', context)
+
+
+def follow(request, account_pk):
+    User = get_user_model()
+    follower = get_object_or_404(User, pk=account_pk)
+    if follower != request.user:
+        # following
+        if request.user in follower.followers.all():
+            follower.followers.remove(request.user)
+        # not following
+        else:
+            follower.followers.add(request.user)
+
+    return redirect('accounts:profile', account_pk)
