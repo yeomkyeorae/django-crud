@@ -6,10 +6,10 @@ class CustomUserChangeForm(UserChangeForm):
     
     class Meta:
         model = get_user_model()    # User return
-        fields = ('username', 'first_name', 'last_name')
+        fields = ('username', 'first_name', 'last_name', 'email')
 
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = get_user_model()
-        fields = ('username', 'first_name', 'last_name')
+        fields = ('username', 'first_name', 'last_name', 'email')

@@ -72,7 +72,7 @@ def detail(request, article_pk):
     context = {
         'article': article,
         'comments': comments,
-        'count': comments.count(),
+        # 'count': comments.count(),
         'comment_form': comment_form,
         'image': article.image,
     }
@@ -166,3 +166,13 @@ def comment_delete(request, comment_pk, article_pk):
         return redirect('articles:detail', article_pk)
     else:
         return HttpResponseForbidden()
+
+
+def like(request, article_pk):
+    article = get_object_or_404(Article, pk=article_pk)
+    # 좋아요를 누른 적이 있다면
+    if request.user in article.like_users.all():
+        request.user.like_articles.remove(article)
+    else:
+        request.user.like_articles.add(article)
+    return redirect('articles:detail', article_pk)

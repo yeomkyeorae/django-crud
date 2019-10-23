@@ -3,6 +3,14 @@
 <!-- load bootstrap4는 항상 해당 템플릿에서 작성 또한 base 이후에 작성돼야 함-->
 {% block body %}
 <h4>{{ article.id }}번 글</h4>
+<a href="{% url 'articles:like' article.pk %}">
+{% if user in article.like_users.all %}
+좋아요 취소
+{% else %}
+좋아요
+{% endif %}
+</a>
+<p> {{ article.like_users.count }}명이 이 글을 좋아합니다.</p>
 <hr>
 <h2>{{ article.title }}
 </h2>
@@ -37,7 +45,7 @@
   {% endbuttons %}
 </form>
 <br>
-<h3>댓글 모음({{count}})</h3>
+<h3>댓글 모음({{ article.comment_set.count }})</h3>
 {% for comment in comments %}
 <div class="card">
   <div class="card-body">
