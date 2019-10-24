@@ -23,7 +23,8 @@
 <img src="{{ image.url }}" alt="nothing" style="width: 50%">
 {% endif %}
 <div class="container border border-muted">
-  <p>{{ article.content }}</p>
+  {% load hashtag %}
+  <p>{{ article | make_link | safe }}</p>
 </div>
 <br>
 <a href="{% url 'articles:index' %}"><button class="btn btn-primary">목록으로</button></a>

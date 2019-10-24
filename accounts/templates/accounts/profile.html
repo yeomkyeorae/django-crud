@@ -33,13 +33,14 @@
     {% for article in user_profile.article_set.all %}
     <tr>
       <th scope="row">{{ article.id }}</th>
-      <td><a href="{{ article.pk }}">{{ article.title }}</a></td>
+      <td><a href="{% url 'articles:detail' article.pk %}">{{ article.title }}</a></td>
       <td>{{ article.created_at }}</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 <br>
+{% if user_profile == user %}
 <button class="btn btn-success disabled">작성 댓글 수: {{user_profile.comment_set.count}}개</button>
   <table class="table table-muted">
   <thead class="thead-gray">
@@ -78,4 +79,5 @@
     {% endfor %}
   </tbody>
 </table>
+{% endif %}
 {% endblock %}

@@ -46,7 +46,7 @@ def login(request):
         'form': form
     }
 
-    return render(request, 'accounts/login.html', context)
+    return render(request, 'accounts/form.html', context)
 
 
 def logout(request):

@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST, require_GET
 from IPython import embed
 from accounts.models import User
 # from django.contrib.auth import get_user_model
-from .models import Article, Comment
+from .models import Article, Comment, HashTag
 from .forms import ArticleForm, CommentForm
 
 
@@ -52,6 +52,12 @@ def create(request):
             article.image_thumbnail = article.image
             article.user = request.user
             article.save()
+            # 해시태그 저장 및 연결 작업
+            
+            for word in article.content.split():
+                if len(word) > 1 and word[0] == '#':
+                    hashtag, created = HashTag.objects.get_or_create(content=word)
+                    article.hashtags.add(hashtag)
 
             return redirect('articles:detail', article.pk)
     
@@ -64,9 +70,7 @@ def create(request):
 def detail(request, article_pk):
     # article = Article.objects.get(pk=article_pk)
     article = get_object_or_404(Article, pk=article_pk)
-    
     comment_form = CommentForm()
-
     comments = article.comment_set.all()
        
     context = {
@@ -114,6 +118,11 @@ def update(request, article_pk):
             # article.content = article_form.cleaned_data.get('content')
             # article.save()
             article = article_form.save()  # return 되는 것은 article instance
+            article.hashtags.clear()
+            for word in article.content.split():
+                if len(word) > 1 and word[0] == '#':
+                    hashtag, created = HashTag.objects.get_or_create(content=word)
+                    article.hashtags.add(hashtag)
 
             return redirect('articles:detail', article_pk)
 
@@ -177,3 +186,11 @@ def like(request, article_pk):
     else:
         request.user.like_articles.add(article)
     return redirect('articles:detail', article_pk)
+
+
+def hashtag(request, tag):
+    hashtag = get_object_or_404(HashTag, pk=tag)
+    context = {
+        'hashtag': hashtag,
+    }
+    return render(request, 'articles/hashtag.html', context)

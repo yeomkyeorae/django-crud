@@ -4,6 +4,14 @@ from django.conf import settings
 from imagekit.models import ProcessedImageField, ImageSpecField
 from imagekit.processors import ResizeToFill, ResizeToFit, Thumbnail
 
+
+class HashTag(models.Model):
+    content = models.TextField(unique=True)
+
+    def __str__(self):
+        return self.content
+
+
 # Create your models here.
 # 모델(스키마) 정의
 # 데이터베이스 테이블을 정의하고,
@@ -33,11 +41,17 @@ class Article(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL,
-                                        related_name='like_articles',   # user도 settings.AUTH_USER_MODEL을 참조하므로 필수적
-                                        blank=True,             # 좋아요가 없어도 Ok
+    like_users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='like_articles',   # user도 settings.AUTH_USER_MODEL을 참조하므로 필수적
+        blank=True,                     # 좋아요가 없어도 Ok
     )
-
+    
+    hashtags = models.ManyToManyField(
+        HashTag,
+        blank= True,
+        related_name='articles',
+    )
 
     def __str__(self):
         return f'{self.id}, {self.title}'

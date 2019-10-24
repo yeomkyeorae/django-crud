@@ -27,7 +27,7 @@
     <tr>
       <th scope="row">{{ article.id }}</th>
       <td><a href="{{ article.pk }}">{{ article.title }}</a></td>
-      <td>{{ article.user }}</td>
+      <td><a href="{% url 'accounts:profile' article.user.pk %}">{{ article.user }}</a></td>
       <td>{{ article.created_at }}</td>
     </tr>
     {% endfor %}
