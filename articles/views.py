@@ -194,3 +194,14 @@ def hashtag(request, tag):
         'hashtag': hashtag,
     }
     return render(request, 'articles/hashtag.html', context)
+
+
+def explore(request):
+    from itertools import chain
+    followings = request.user.followings.all()
+    followings = chain(followings, [request.user])
+    articles = Article.objects.filter(user__in=followings).order_by('-id')
+    context = {
+        'articles': articles
+    }
+    return render(request, 'articles/index.html', context)

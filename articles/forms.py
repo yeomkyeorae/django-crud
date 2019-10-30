@@ -1,6 +1,7 @@
 from django import forms
 from .models import Article, Comment
 
+
 # model form
 class ArticleForm(forms.ModelForm):
     # 위젯 설정 1.
@@ -14,6 +15,7 @@ class ArticleForm(forms.ModelForm):
             }
         )
     )
+
     class Meta: # 데이터에 대한 데이터, ArticleForm에 대한 정보를 담고 있다. 
         # 예: 사진 데이터의 정보로서 위치, 감도, 일시 등
         model = Article

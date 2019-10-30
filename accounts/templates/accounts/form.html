@@ -1,6 +1,6 @@
 {% extends 'accounts/base.html' %}
 {% load bootstrap4 %}
-
+{% load socialaccount %}
 {% block body %}
 <form role="form" action="" method="POST">
   {% csrf_token %}
@@ -8,5 +8,8 @@
   {% buttons %}
   <button type="submit" class="btn btn-primary">Submit</button>
   {% endbuttons %}
+  {% if request.resolver_match.url_name == 'login' %}
+  <a href="{% provider_login_url "kakao" %}">카카오 로그인</a>
+  {% endif %}
 </form>
 {% endblock %}

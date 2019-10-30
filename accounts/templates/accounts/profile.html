@@ -6,7 +6,7 @@
 </a>
 <br>
 <br>
-<img src="{{ user.email|makehash }}" alt="">
+<img src="{{ user|makehash }}" alt="" style="width:30%">
 <h1>{{ user_profile.username }}님의 프로필</h1>
 <hr>
 {% with user_profile.followers.all as followers %}

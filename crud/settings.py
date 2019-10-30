@@ -38,10 +38,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',  # messages framework
     'django.contrib.staticfiles',   # static file css, js, bootstrap  
     'django_extensions',
-    'articles',
-    'accounts',
     'bootstrap4',
     'imagekit',
+    # allauth
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.kakao',
+    # apps
+    'articles',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -140,3 +147,10 @@ MEDIA_URL = '/media/'
 # AUTH
 LOGIN_URL = '/accounts/login/'  # default! @login_required에서 사용! login이 안되어있을 시 이동하는 곳
 AUTH_USER_MODEL = 'accounts.User'   # default : 'auth.User'
+
+# for django-allauth
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+)
+SITE_ID = 1  # 'django.contrib.sites' -> SITE_ID 부여
+LOGIN_REDIRECT_URL = 'articles:index'
