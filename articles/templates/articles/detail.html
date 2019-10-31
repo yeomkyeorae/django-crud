@@ -3,14 +3,14 @@
 <!-- load bootstrap4는 항상 해당 템플릿에서 작성 또한 base 이후에 작성돼야 함-->
 {% block body %}
 <h4>{{ article.id }}번 글</h4>
-<a href="{% url 'articles:like' article.pk %}">
+<!-- <a href="{% url 'articles:like' article.pk %}"> -->
 {% if user in article.like_users.all %}
-<i class="fas fa-heart fa-2x animated infinite bounce delay-2s" style="color: pink"></i>
+<i class="fas fa-heart fa-2x animated infinite bounce delay-2s" data-id="{{article.id}}" id="like-btn" style="color: pink"></i>
 {% else %}
-<i class="far fa-heart fa-2x animated infinite bounce delay-2s" style="color: pink"></i>
+<i class="far fa-heart fa-2x animated infinite bounce delay-2s" data-id="{{article.id}}" id="like-btn" style="color: pink"></i>
 {% endif %}
-</a>
-<p> {{ article.like_users.count }}명이 이 글을 좋아합니다.</p>
+<!-- </a> -->
+<p><span id="like-cnt">{{ article.like_users.count }}</span>명이 이 글을 좋아합니다.</p>
 <hr>
 <h2>{{ article.title }}
 </h2>
@@ -64,10 +64,31 @@
   </div>
 </div>
 {% endfor %}
+{% block script %}
 <script>
   var message_ele = document.getElementById("warning");
   setTimeout(function () {
     message_ele.style.display = "none";
   }, 3000);
+
+  const likeBtn = document.querySelector('#like-btn')
+  const likeCnt = document.querySelector('#like-cnt')
+  likeBtn.addEventListener('click', function (event) {
+    console.log(event.target.dataset)
+    axios.get(`/articles/${event.target.dataset.id}/like/`)
+      .then(response => {
+        console.log(response)
+        console.log(event.target)
+        if(response.data.is_liked === true){
+          event.target.classList.remove('far')
+          event.target.classList.add('fas')
+        }else{
+          event.target.classList.remove('fas')
+          event.target.classList.add('far')
+        }
+        likeCnt.innerText = response.data.like_cnt
+      })
+  })
 </script>
+{% endblock %}
 {% endblock %}

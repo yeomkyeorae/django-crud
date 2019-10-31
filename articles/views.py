@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden, HttpResponse
+from django.http import HttpResponseForbidden, HttpResponse, JsonResponse
 # POST 요청만 허용할 수 있도록 'require_POST'를 import, 아래 delete에서 사용
 from django.views.decorators.http import require_POST, require_GET
 # embed를 사용하면 embed() 함수에서 실행이 멈추고 IPython이 열려 현재까지의 변수 내용을 출력해 볼 수 있음.
@@ -181,11 +181,15 @@ def like(request, article_pk):
     article = get_object_or_404(Article, pk=article_pk)
     # 좋아요를 누른 적이 있다면
     # if article.like_users.filter(id=request.user.id):
+    is_liked = True
     if request.user in article.like_users.all():
         request.user.like_articles.remove(article)
+        is_liked = False
     else:
         request.user.like_articles.add(article)
-    return redirect('articles:detail', article_pk)
+        is_liked = True
+    like_cnt = article.like_users.count()
+    return JsonResponse({'is_liked': is_liked, 'like_cnt': like_cnt})
 
 
 def hashtag(request, tag):
